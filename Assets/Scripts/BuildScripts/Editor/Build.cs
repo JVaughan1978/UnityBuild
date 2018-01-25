@@ -5,8 +5,10 @@ using UnityEditor;
 
 public class Build
 {
-    private const string buildPathRoot = "d:/builds/";
+    //TODO: Common Config...
+    private static string buildPathRoot = "d:/builds/";
 
+#region BUILD_MENU
     [MenuItem("Build/Build Android")]
     static void BuildAndroid()
     {
@@ -24,15 +26,15 @@ public class Build
 
         BuildPlayerOptions options = new BuildPlayerOptions
         {
-            scenes= GetScenesInternal(),
+            scenes= GetScenesFromSettings(),
             locationPathName= path,
             target= BuildTarget.Android,
             options= BuildOptions.Il2CPP
         };
-        InternalBuild(options);
+        _Build(options);
     }
 
-#if UNITY_STANDALONE_OSX
+#if UNITY_EDITOR_OSX
     [MenuItem("Build/Build iOS")]
     public static void BuildiOS()
     {
@@ -44,12 +46,12 @@ public class Build
 
         BuildPlayerOptions options = new BuildPlayerOptions
         {
-            scenes= GetScenesInternal(),
+            scenes= GetScenesFromSettings(),
             locationPathName= path,
             target= BuildTarget.iOS,
             options= BuildOptions.Il2CPP
         };
-        InternalBuild(options);
+        _Build(options);
     }
 
     [MenuItem("Build/Build Standalone OSX")]
@@ -63,16 +65,16 @@ public class Build
 
         BuildPlayerOptions options = new BuildPlayerOptions
         {
-            scenes= GetScenesInternal(),
+            scenes= GetScenesFromSettings(),
             locationPathName= path,
             target= BuildTarget.StandaloneOSX,
             options= BuildOptions.Il2CPP
         };
-        InternalBuild(options);
+        _Build(options);
     }
 #endif
 
-#if UNITY_STANDALONE_WIN
+#if UNITY_EDITOR_WIN
     [MenuItem("Build/Build Standalone Windows 64")]
     static void BuildWindows()
     {
@@ -84,41 +86,55 @@ public class Build
 
         BuildPlayerOptions options = new BuildPlayerOptions
         {
-            scenes= GetScenesInternal(),
+            scenes= GetScenesFromSettings(),
             locationPathName= path,
             target= BuildTarget.StandaloneWindows64,
             options= BuildOptions.None
         };
-        InternalBuild(options);
+        _Build(options);
     }
 #endif
 
+#region CLI_BUILD
     public static void Android()
     {
         //TBD
     }
 
+#if UNITY_EDITOR_OSX
     public static void iOS()
     {
         //TBD
-    }
-
-    public static void Win64()
-    {
     }
 
     public static void OSX()
     {
         //TBD
     }
+#endif
 
-    static void InternalBuild(BuildPlayerOptions options)
+#if UNITY_EDITOR_WIN
+    public static void Win64()
     {
+        //TBD
+    }
+#endif
+    #endregion
+
+#region COMMON_FUNCTIONS
+    static void _Build(BuildPlayerOptions options)
+    {
+        PreBuild();
         BuildPipeline.BuildPlayer(options);
-        Debug.Log("Complete!");
+        Debug.Log("Build Complete!");
     }
 
-    static string[] GetScenesInternal()
+    static void PreBuild()
+    {
+        //S 
+    }
+
+    static string[] GetScenesFromSettings()
     {
         List<string> scenes= new List<string>();
         foreach(var scene in EditorBuildSettings.scenes)
@@ -141,19 +157,37 @@ public class Build
 
     static bool CheckAndroidPaths()
     {
-        string test = EditorPrefs.GetString("AndroidSdkRoot");
+        string test= EditorPrefs.GetString("AndroidSdkRoot");
         if(string.IsNullOrEmpty(test))
         {
             Debug.Log("ERROR: NO ANDROID SDK FOUND");
             return false;
         }
 
-        test = EditorPrefs.GetString("AndroidNdkRoot");
+        test= EditorPrefs.GetString("AndroidNdkRoot");
         if(string.IsNullOrEmpty(test))
         {
             Debug.Log("ERROR: NO ANDROID NDK FOUND");
             return false;
         }
+
+        test= EditorPrefs.GetString("JdkPath");
+        if(string.IsNullOrEmpty(test))
+        {
+            Debug.Log("ERROR: NO JAVA SDK FOUND");
+            return false;
+        }
         return true;
     }
+
+    static string GetBuildPathFromArgs()
+    {
+        return null;
+    }
+
+    static BuildOptions GetBuildOptionsFromArgs()
+    {
+        return BuildOptions.None;
+    }
+#endregion
 }

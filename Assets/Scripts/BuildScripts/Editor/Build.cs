@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class Build
 {
-    //TODO: Common Config...
+    //default build path can be overridden by creating UnityProjRoot/Config/config.json
     private static string buildPathRoot= "c:/builds/";
 
 #region BUILD_MENU
@@ -222,8 +222,6 @@ public class Build
             options= BuildOptions.None
         };
         _Build(options);
-
-
     }
 #endif
 #endregion
@@ -285,8 +283,20 @@ public class Build
     static void CheckDirectory(string path)
     {
         if(!Directory.Exists(path))
-        {
+        { //Create directory
             Directory.CreateDirectory(path);
+        }
+        else
+        { //Clear directory
+            DirectoryInfo di = new DirectoryInfo(path);
+            foreach(FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach(DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
         }
     }
 

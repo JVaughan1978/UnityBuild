@@ -7,7 +7,7 @@ using UnityEditor;
 public class Build
 {
     //TODO: Common Config...
-    private static string buildPathRoot = "d:/builds/";
+    private static string buildPathRoot= "d:/builds/";
 
 #region BUILD_MENU
     [MenuItem("Build/Build Android")]
@@ -21,7 +21,7 @@ public class Build
             return;
         }
 
-        BuildPlayerOptions options = new BuildPlayerOptions
+        BuildPlayerOptions options= new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
             locationPathName= GetPath("android", ".apk"),
@@ -37,7 +37,7 @@ public class Build
     {
         Debug.Log("Starting iOS Build");
 
-        BuildPlayerOptions options = new BuildPlayerOptions
+        BuildPlayerOptions options= new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
             locationPathName= GetPath("ios", ""),
@@ -52,7 +52,7 @@ public class Build
     {
         Debug.Log("Starting Standalone OSX Build");
 
-        BuildPlayerOptions options = new BuildPlayerOptions
+        BuildPlayerOptions options= new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
             locationPathName= GetPath("osx", ""); 
@@ -69,7 +69,7 @@ public class Build
     {
         Debug.Log("Starting Windows 64 Build");
 
-        BuildPlayerOptions options = new BuildPlayerOptions
+        BuildPlayerOptions options= new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
             locationPathName= GetPath("win64",".exe"),
@@ -84,7 +84,23 @@ public class Build
 #region CLI_BUILD
     public static void Android()
     {
-        //TBD
+        Debug.Log("Starting Android Build");
+        string path= string.Empty;
+        bool _build= GetBuildPathFromArgs(out path);
+        if(!_build)
+        {
+            Debug.Log("ERROR: Invalid Path");
+            return;
+        }
+
+        BuildPlayerOptions options= new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= path,
+            target= BuildTarget.Android,
+            options= BuildOptions.Il2CPP
+        };
+        _Build(options);
     }
 
 #if UNITY_EDITOR_OSX
@@ -117,12 +133,12 @@ public class Build
 
     static void PreBuild()
     {
-        //S 
+        //TDB...
     }
 
     static string GetPath(string buildTarget, string extension)
     {
-        string path = buildPathRoot + buildTarget + "/";
+        string path= buildPathRoot + buildTarget + "/";
         CheckDirectory(path);
         path += Application.productName + extension;
         return path;
@@ -176,9 +192,9 @@ public class Build
 
     static bool GetBuildPathFromArgs(out string path)
     {
-        path = null;
-        string[] commandlineArgs = Environment.GetCommandLineArgs();
-        for(int i = 0; i < commandlineArgs.Length; i++)
+        path= null;
+        string[] commandlineArgs= Environment.GetCommandLineArgs();
+        for(int i= 0; i < commandlineArgs.Length; i++)
         {
             if(commandlineArgs[i] == "-buildPath")
             {
@@ -188,14 +204,14 @@ public class Build
                     return false;
                 }
 
-                path = commandlineArgs[i+1];
+                path= commandlineArgs[i+1];
 
                 if(string.IsNullOrEmpty(path))
                 {
                     Debug.Log("Null or empty path.");
                     return false;
                 }
-
+                
                 if(!Uri.IsWellFormedUriString(path, UriKind.Absolute))
                 {
                     Debug.Log("Malformed Uri");

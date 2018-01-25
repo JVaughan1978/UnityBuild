@@ -2,9 +2,9 @@
 
 public class SpinningCube : MonoBehaviour 
 {
-	public float m_Speed = 20f;
+	public float m_Speed= 20f;
 
-	private Vector3 m_RotationDirection = Vector3.up;
+	private Vector3 m_RotationDirection= Vector3.up;
 
 	public void ToggleRotationDirection()
 	{
@@ -12,11 +12,11 @@ public class SpinningCube : MonoBehaviour
 
 		if (m_RotationDirection == Vector3.up) 
 		{
-			m_RotationDirection = Vector3.down;
+			m_RotationDirection= Vector3.down;
 		}
 		else 
 		{
-			m_RotationDirection = Vector3.up;
+			m_RotationDirection= Vector3.up;
 		}
 	}
 

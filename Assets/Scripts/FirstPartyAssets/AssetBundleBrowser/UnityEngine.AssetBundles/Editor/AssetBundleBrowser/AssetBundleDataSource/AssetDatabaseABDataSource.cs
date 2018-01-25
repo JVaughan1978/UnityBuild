@@ -12,8 +12,8 @@ namespace UnityEngine.AssetBundles.AssetBundleDataSource
     {
         public static List<ABDataSource> CreateDataSources()
         {
-            var op = new AssetDatabaseABDataSource();
-            var retList = new List<ABDataSource>();
+            var op= new AssetDatabaseABDataSource();
+            var retList= new List<ABDataSource>();
             retList.Add(op);
             return retList;
         }
@@ -35,13 +35,13 @@ namespace UnityEngine.AssetBundles.AssetBundleDataSource
         }
 
         public string GetAssetBundleName(string assetPath) {
-            var importer = AssetImporter.GetAtPath(assetPath);
+            var importer= AssetImporter.GetAtPath(assetPath);
             if (importer == null) {
                 return string.Empty;
             }
-            var bundleName = importer.assetBundleName;
+            var bundleName= importer.assetBundleName;
             if (importer.assetBundleVariant.Length > 0) {
-                bundleName = bundleName + "." + importer.assetBundleVariant;
+                bundleName= bundleName + "." + importer.assetBundleVariant;
             }
             return bundleName;
         }

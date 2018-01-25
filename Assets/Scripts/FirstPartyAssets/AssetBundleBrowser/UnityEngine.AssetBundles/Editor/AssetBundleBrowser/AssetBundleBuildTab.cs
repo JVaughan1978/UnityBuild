@@ -10,16 +10,16 @@ namespace UnityEngine.AssetBundles
     [System.Serializable]
     public class AssetBundleBuildTab
     {
-        const string k_BuildPrefPrefix = "ABBBuild:";
+        const string k_BuildPrefPrefix= "ABBBuild:";
         // gui vars
         [SerializeField]
-        private ValidBuildTarget m_BuildTarget = ValidBuildTarget.StandaloneWindows;
+        private ValidBuildTarget m_BuildTarget= ValidBuildTarget.StandaloneWindows;
         [SerializeField]
-        private CompressOptions m_Compression = CompressOptions.StandardCompression;        
-        private string m_OutputPath = string.Empty;
+        private CompressOptions m_Compression= CompressOptions.StandardCompression;        
+        private string m_OutputPath= string.Empty;
         [SerializeField]
-        private bool m_UseDefaultPath = true;
-        private string m_streamingPath = "Assets/StreamingAssets";
+        private bool m_UseDefaultPath= true;
+        private string m_streamingPath= "Assets/StreamingAssets";
 
         [SerializeField]
         private bool m_AdvancedSettings;
@@ -34,14 +34,14 @@ namespace UnityEngine.AssetBundles
                 string title, 
                 string tooltip,
                 List<string> onToggles,
-                BuildAssetBundleOptions opt = BuildAssetBundleOptions.None)
+                BuildAssetBundleOptions opt= BuildAssetBundleOptions.None)
             {
                 if (onToggles.Contains(title))
-                    state = true;
+                    state= true;
                 else
-                    state = s;
-                content = new GUIContent(title, tooltip);
-                option = opt;
+                    state= s;
+                content= new GUIContent(title, tooltip);
+                option= opt;
             }
             //public string prefsKey
             //{ get { return k_BuildPrefPrefix + content.text; } }
@@ -59,29 +59,29 @@ namespace UnityEngine.AssetBundles
         GUIContent m_CompressionContent;
         public enum CompressOptions
         {
-            Uncompressed = 0,
+            Uncompressed= 0,
             StandardCompression,
             ChunkBasedCompression,
         }
-        GUIContent[] m_CompressionOptions =
+        GUIContent[] m_CompressionOptions=
         {
             new GUIContent("No Compression"),
             new GUIContent("Standard Compression (LZMA)"),
             new GUIContent("Chunk Based Compression (LZ4)")
         };
-        int[] m_CompressionValues = { 0, 1, 2 };
+        int[] m_CompressionValues= { 0, 1, 2 };
 
 
         public AssetBundleBuildTab()
         {
-            m_AdvancedSettings = false;
-            m_OnToggles = new List<string>();
-            m_UseDefaultPath = true;
+            m_AdvancedSettings= false;
+            m_OnToggles= new List<string>();
+            m_UseDefaultPath= true;
         }
 
         public void OnEnable(Rect pos, EditorWindow parent)
         {
-            m_ToggleData = new List<ToggleData>();
+            m_ToggleData= new List<ToggleData>();
             m_ToggleData.Add(new ToggleData(
                 false,
                 "Exclude Type Information",
@@ -120,19 +120,19 @@ namespace UnityEngine.AssetBundles
                 BuildAssetBundleOptions.DryRunBuild));
 
 
-            m_ForceRebuild = new ToggleData(
+            m_ForceRebuild= new ToggleData(
                 false,
                 "Clear Folders",
                 "Will wipe out all contents of build directory as well as StreamingAssets/AssetBundles if you are choosing to copy build there.",
                 m_OnToggles);
-            m_CopyToStreaming = new ToggleData(
+            m_CopyToStreaming= new ToggleData(
                 false,
                 "Copy to StreamingAssets",
                 "After build completes, will copy all build content to " + m_streamingPath + " for use in stand-alone player.",
                 m_OnToggles);
 
-            m_TargetContent = new GUIContent("Build Target", "Choose target platform to build for.");
-            m_CompressionContent = new GUIContent("Compression", "Choose no compress, standard (LZMA), or chunk based (LZ4)");
+            m_TargetContent= new GUIContent("Build Target", "Choose target platform to build for.");
+            m_CompressionContent= new GUIContent("Compression", "Choose no compress, standard (LZMA), or chunk based (LZ4)");
 
             if(m_UseDefaultPath)
             {
@@ -142,8 +142,8 @@ namespace UnityEngine.AssetBundles
 
         public void OnGUI(Rect pos)
         {
-            m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);
-            bool newState = false;
+            m_ScrollPosition= EditorGUILayout.BeginScrollView(m_ScrollPosition);
+            bool newState= false;
 
             //basic options
             EditorGUILayout.Space();
@@ -151,13 +151,13 @@ namespace UnityEngine.AssetBundles
 
             // build target
             using (new EditorGUI.DisabledScope (!AssetBundleModel.Model.DataSource.CanSpecifyBuildTarget)) {
-                ValidBuildTarget tgt = (ValidBuildTarget)EditorGUILayout.EnumPopup(m_TargetContent, m_BuildTarget);
+                ValidBuildTarget tgt= (ValidBuildTarget)EditorGUILayout.EnumPopup(m_TargetContent, m_BuildTarget);
                 if (tgt != m_BuildTarget)
                 {
-                    m_BuildTarget = tgt;
+                    m_BuildTarget= tgt;
                     if(m_UseDefaultPath)
                     {
-                        m_OutputPath = "AssetBundles/";
+                        m_OutputPath= "AssetBundles/";
                         m_OutputPath += m_BuildTarget.ToString();
                         EditorUserBuildSettings.SetPlatformSettings(EditorUserBuildSettings.activeBuildTarget.ToString(), "AssetBundleOutputPath", m_OutputPath);
                     }
@@ -169,11 +169,11 @@ namespace UnityEngine.AssetBundles
             using (new EditorGUI.DisabledScope (!AssetBundleModel.Model.DataSource.CanSpecifyBuildOutputDirectory)) {
                 EditorGUILayout.Space();
                 GUILayout.BeginHorizontal();
-                var newPath = EditorGUILayout.TextField("Output Path", m_OutputPath);
+                var newPath= EditorGUILayout.TextField("Output Path", m_OutputPath);
                 if (newPath != m_OutputPath)
                 {
-                    m_UseDefaultPath = false;
-                    m_OutputPath = newPath;
+                    m_UseDefaultPath= false;
+                    m_OutputPath= newPath;
                     EditorUserBuildSettings.SetPlatformSettings(EditorUserBuildSettings.activeBuildTarget.ToString(), "AssetBundleOutputPath", m_OutputPath);
                 }
                 GUILayout.EndHorizontal();
@@ -184,11 +184,11 @@ namespace UnityEngine.AssetBundles
                 if (GUILayout.Button("Reset", GUILayout.MaxWidth(75f)))
                     ResetPathToDefault();
                 if (string.IsNullOrEmpty(m_OutputPath))
-                    m_OutputPath = EditorUserBuildSettings.GetPlatformSettings(EditorUserBuildSettings.activeBuildTarget.ToString(), "AssetBundleOutputPath");
+                    m_OutputPath= EditorUserBuildSettings.GetPlatformSettings(EditorUserBuildSettings.activeBuildTarget.ToString(), "AssetBundleOutputPath");
                 GUILayout.EndHorizontal();
                 EditorGUILayout.Space();
 
-                newState = GUILayout.Toggle(
+                newState= GUILayout.Toggle(
                     m_ForceRebuild.state,
                     m_ForceRebuild.content);
                 if (newState != m_ForceRebuild.state)
@@ -197,9 +197,9 @@ namespace UnityEngine.AssetBundles
                         m_OnToggles.Add(m_ForceRebuild.content.text);
                     else
                         m_OnToggles.Remove(m_ForceRebuild.content.text);
-                    m_ForceRebuild.state = newState;
+                    m_ForceRebuild.state= newState;
                 }
-                newState = GUILayout.Toggle(
+                newState= GUILayout.Toggle(
                     m_CopyToStreaming.state,
                     m_CopyToStreaming.content);
                 if (newState != m_CopyToStreaming.state)
@@ -208,19 +208,19 @@ namespace UnityEngine.AssetBundles
                         m_OnToggles.Add(m_CopyToStreaming.content.text);
                     else
                         m_OnToggles.Remove(m_CopyToStreaming.content.text);
-                    m_CopyToStreaming.state = newState;
+                    m_CopyToStreaming.state= newState;
                 }
             }
 
             // advanced options
             using (new EditorGUI.DisabledScope (!AssetBundleModel.Model.DataSource.CanSpecifyBuildOptions)) {
                 EditorGUILayout.Space();
-                m_AdvancedSettings = EditorGUILayout.Foldout(m_AdvancedSettings, "Advanced Settings");
+                m_AdvancedSettings= EditorGUILayout.Foldout(m_AdvancedSettings, "Advanced Settings");
                 if(m_AdvancedSettings)
                 {
-                    var indent = EditorGUI.indentLevel;
-                    EditorGUI.indentLevel = 1;
-                    CompressOptions cmp = (CompressOptions)EditorGUILayout.IntPopup(
+                    var indent= EditorGUI.indentLevel;
+                    EditorGUI.indentLevel= 1;
+                    CompressOptions cmp= (CompressOptions)EditorGUILayout.IntPopup(
                         m_CompressionContent, 
                         (int)m_Compression,
                         m_CompressionOptions,
@@ -228,11 +228,11 @@ namespace UnityEngine.AssetBundles
 
                     if (cmp != m_Compression)
                     {
-                        m_Compression = cmp;
+                        m_Compression= cmp;
                     }
                     foreach (var tog in m_ToggleData)
                     {
-                        newState = EditorGUILayout.ToggleLeft(
+                        newState= EditorGUILayout.ToggleLeft(
                             tog.content,
                             tog.state);
                         if (newState != tog.state)
@@ -242,11 +242,11 @@ namespace UnityEngine.AssetBundles
                                 m_OnToggles.Add(tog.content.text);
                             else
                                 m_OnToggles.Remove(tog.content.text);
-                            tog.state = newState;
+                            tog.state= newState;
                         }
                     }
                     EditorGUILayout.Space();
-                    EditorGUI.indentLevel = indent;
+                    EditorGUI.indentLevel= indent;
                 }
             }
 
@@ -274,7 +274,7 @@ namespace UnityEngine.AssetBundles
 
                 if (m_ForceRebuild.state)
                 {
-                    string message = "Do you want to delete all files in the directory " + m_OutputPath;
+                    string message= "Do you want to delete all files in the directory " + m_OutputPath;
                     if (m_CopyToStreaming.state)
                         message += " and " + m_streamingPath;
                     message += "?";
@@ -299,7 +299,7 @@ namespace UnityEngine.AssetBundles
                     Directory.CreateDirectory(m_OutputPath);
             }
 
-            BuildAssetBundleOptions opt = BuildAssetBundleOptions.None;
+            BuildAssetBundleOptions opt= BuildAssetBundleOptions.None;
 
             if (AssetBundleModel.Model.DataSource.CanSpecifyBuildOptions) {
                 if (m_Compression == CompressOptions.Uncompressed)
@@ -313,11 +313,11 @@ namespace UnityEngine.AssetBundles
                 }
             }
 
-            ABBuildInfo buildInfo = new ABBuildInfo();
+            ABBuildInfo buildInfo= new ABBuildInfo();
 
-            buildInfo.outputDirectory = m_OutputPath;
-            buildInfo.options = opt;
-            buildInfo.buildTarget = (BuildTarget)m_BuildTarget;
+            buildInfo.outputDirectory= m_OutputPath;
+            buildInfo.options= opt;
+            buildInfo.buildTarget= (BuildTarget)m_BuildTarget;
 
             AssetBundleModel.Model.DataSource.BuildAssetBundles (buildInfo);
 
@@ -330,7 +330,7 @@ namespace UnityEngine.AssetBundles
         private static void DirectoryCopy(string sourceDirName, string destDirName)
         {
             // Get the subdirectories for the specified directory.
-            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            DirectoryInfo dir= new DirectoryInfo(sourceDirName);
 
             // If the destination directory doesn't exist, create it.
             if (!Directory.Exists(destDirName))
@@ -339,40 +339,40 @@ namespace UnityEngine.AssetBundles
             }
 
             // Get the files in the directory and copy them to the new location.
-            FileInfo[] files = dir.GetFiles();
+            FileInfo[] files= dir.GetFiles();
             foreach (FileInfo file in files)
             {
-                string temppath = Path.Combine(destDirName, file.Name);
+                string temppath= Path.Combine(destDirName, file.Name);
                 file.CopyTo(temppath, false);
             }
 
 
-            DirectoryInfo[] dirs = dir.GetDirectories();
+            DirectoryInfo[] dirs= dir.GetDirectories();
             foreach (DirectoryInfo subdir in dirs)
             {
-                string temppath = Path.Combine(destDirName, subdir.Name);
+                string temppath= Path.Combine(destDirName, subdir.Name);
                 DirectoryCopy(subdir.FullName, temppath);
             }
         }
 
         private void BrowseForFolder()
         {
-            m_UseDefaultPath = false;
-            var newPath = EditorUtility.OpenFolderPanel("Bundle Folder", m_OutputPath, string.Empty);
+            m_UseDefaultPath= false;
+            var newPath= EditorUtility.OpenFolderPanel("Bundle Folder", m_OutputPath, string.Empty);
             if (!string.IsNullOrEmpty(newPath))
             {
-                var gamePath = System.IO.Path.GetFullPath(".");
-                gamePath = gamePath.Replace("\\", "/");
+                var gamePath= System.IO.Path.GetFullPath(".");
+                gamePath= gamePath.Replace("\\", "/");
                 if (newPath.StartsWith(gamePath) && newPath.Length > gamePath.Length)
-                    newPath = newPath.Remove(0, gamePath.Length+1);
-                m_OutputPath = newPath;
+                    newPath= newPath.Remove(0, gamePath.Length+1);
+                m_OutputPath= newPath;
                 EditorUserBuildSettings.SetPlatformSettings(EditorUserBuildSettings.activeBuildTarget.ToString(), "AssetBundleOutputPath", m_OutputPath);
             }
         }
         private void ResetPathToDefault()
         {
-            m_UseDefaultPath = true;
-            m_OutputPath = "AssetBundles/";
+            m_UseDefaultPath= true;
+            m_OutputPath= "AssetBundles/";
             m_OutputPath += m_BuildTarget.ToString();
             EditorUserBuildSettings.SetPlatformSettings(EditorUserBuildSettings.activeBuildTarget.ToString(), "AssetBundleOutputPath", m_OutputPath);
         }
@@ -380,38 +380,38 @@ namespace UnityEngine.AssetBundles
         //Note: this is the provided BuildTarget enum with some entries removed as they are invalid in the dropdown
         public enum ValidBuildTarget
         {
-            //NoTarget = -2,        --doesn't make sense
-            //iPhone = -1,          --deprecated
-            //BB10 = -1,            --deprecated
-            //MetroPlayer = -1,     --deprecated
-            StandaloneOSXUniversal = 2,
-            StandaloneOSXIntel = 4,
-            StandaloneWindows = 5,
-            WebPlayer = 6,
-            WebPlayerStreamed = 7,
-            iOS = 9,
-            PS3 = 10,
-            XBOX360 = 11,
-            Android = 13,
-            StandaloneLinux = 17,
-            StandaloneWindows64 = 19,
-            WebGL = 20,
-            WSAPlayer = 21,
-            StandaloneLinux64 = 24,
-            StandaloneLinuxUniversal = 25,
-            WP8Player = 26,
-            StandaloneOSXIntel64 = 27,
-            BlackBerry = 28,
-            Tizen = 29,
-            PSP2 = 30,
-            PS4 = 31,
-            PSM = 32,
-            XboxOne = 33,
-            SamsungTV = 34,
-            N3DS = 35,
-            WiiU = 36,
-            tvOS = 37,
-            Switch = 38
+            //NoTarget= -2,        --doesn't make sense
+            //iPhone= -1,          --deprecated
+            //BB10= -1,            --deprecated
+            //MetroPlayer= -1,     --deprecated
+            StandaloneOSXUniversal= 2,
+            StandaloneOSXIntel= 4,
+            StandaloneWindows= 5,
+            WebPlayer= 6,
+            WebPlayerStreamed= 7,
+            iOS= 9,
+            PS3= 10,
+            XBOX360= 11,
+            Android= 13,
+            StandaloneLinux= 17,
+            StandaloneWindows64= 19,
+            WebGL= 20,
+            WSAPlayer= 21,
+            StandaloneLinux64= 24,
+            StandaloneLinuxUniversal= 25,
+            WP8Player= 26,
+            StandaloneOSXIntel64= 27,
+            BlackBerry= 28,
+            Tizen= 29,
+            PSP2= 30,
+            PS4= 31,
+            PSM= 32,
+            XboxOne= 33,
+            SamsungTV= 34,
+            N3DS= 35,
+            WiiU= 36,
+            tvOS= 37,
+            Switch= 38
         }
     }
 }

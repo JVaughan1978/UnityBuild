@@ -15,6 +15,12 @@ public class Build
     {
         Debug.Log("Starting Android Build");
 
+        if(InBatchMode())
+        {
+            Debug.Log("ERROR: EDITOR ONLY");
+            return;
+        }
+
         if(!CheckAndroidPaths())
         {
             Debug.Log("ERROR: INVALID ANDROID PATHS");
@@ -37,6 +43,12 @@ public class Build
     {
         Debug.Log("Starting iOS Build");
 
+        if(InBatchMode())
+        {
+            Debug.Log("ERROR: EDITOR ONLY");
+            return;
+        }
+
         BuildPlayerOptions options= new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
@@ -51,6 +63,12 @@ public class Build
     public static void BuildMac()
     {
         Debug.Log("Starting Standalone OSX Build");
+
+        if(InBatchMode())
+        {
+            Debug.Log("ERROR: EDITOR ONLY");
+            return;
+        }
 
         BuildPlayerOptions options= new BuildPlayerOptions
         {
@@ -69,6 +87,12 @@ public class Build
     {
         Debug.Log("Starting Windows 64 Build");
 
+        if(InBatchMode())
+        {
+            Debug.Log("ERROR: EDITOR ONLY");
+            return;
+        }
+
         BuildPlayerOptions options= new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
@@ -85,6 +109,13 @@ public class Build
     public static void Android()
     {
         Debug.Log("Starting Android Build");
+
+        if(!InBatchMode())
+        {
+            Debug.Log("ERROR: CLI USE ONLY");
+            return;
+        }
+
         string path= string.Empty;
         bool _build= GetBuildPathFromArgs(out path);
         if(!_build)
@@ -106,19 +137,90 @@ public class Build
 #if UNITY_EDITOR_OSX
     public static void iOS()
     {
-        //TBD
+        Debug.Log("Starting Standalone iOS Build");
+
+        if(!InBatchMode())
+        {
+            Debug.Log("ERROR: CLI USE ONLY");
+            return;
+        }
+
+        string path = string.Empty;
+        bool _build = GetBuildPathFromArgs(out path);
+        if(!_build)
+        {
+            Debug.Log("ERROR: Invalid Path");
+            return;
+        }
+
+        BuildPlayerOptions options = new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= path,
+            target= BuildTarget.iOS,
+            options= BuildOptions.None
+        };
+        _Build(options);
     }
 
     public static void OSX()
     {
-        //TBD
+        Debug.Log("Starting Standalone OSX Build");
+
+        if(!InBatchMode())
+        {
+            Debug.Log("ERROR: CLI USE ONLY");
+            return;
+        }
+
+        string path = string.Empty;
+        bool _build = GetBuildPathFromArgs(out path);
+        if(!_build)
+        {
+            Debug.Log("ERROR: Invalid Path");
+            return;
+        }
+
+        BuildPlayerOptions options = new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= path,
+            target= BuildTarget.StandaloneOSX,
+            options= BuildOptions.None
+        };
+        _Build(options);
     }
 #endif
 
 #if UNITY_EDITOR_WIN
     public static void Win64()
     {
-        //TBD
+        Debug.Log("Starting Standalone Windows 64 Build");
+
+        if(!InBatchMode())
+        {
+            Debug.Log("ERROR: CLI USE ONLY");
+            return;
+        }
+
+        string path = string.Empty;
+        bool _build = GetBuildPathFromArgs(out path);
+        if(!_build)
+        {
+            Debug.Log("ERROR: Invalid Path");
+            return;
+        }
+
+        BuildPlayerOptions options = new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= path,
+            target= BuildTarget.StandaloneWindows64,
+            options= BuildOptions.None
+        };
+        _Build(options);
+
+
     }
 #endif
 #endregion
@@ -133,7 +235,7 @@ public class Build
 
     static void PreBuild()
     {
-        //TDB...
+        //TODO: Depends on a few internal conditions
     }
 
     static string GetPath(string buildTarget, string extension)
@@ -194,9 +296,16 @@ public class Build
     {
         path= null;
         string[] commandlineArgs= Environment.GetCommandLineArgs();
+        string commands = string.Empty;
+        foreach(var command in commandlineArgs)
+        {
+            commands += command + Environment.NewLine;
+        }
+        Debug.Log(commands);
+
         for(int i= 0; i < commandlineArgs.Length; i++)
         {
-            if(commandlineArgs[i] == "-buildPath")
+            if(commandlineArgs[i].ToLower() == "-buildpath")
             {
                 if(i == commandlineArgs.Length)
                 {
@@ -218,6 +327,20 @@ public class Build
                     return false;
                 }
 
+                CheckDirectory(Path.GetDirectoryName(path));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static bool InBatchMode()
+    {
+        string[] commandLineArgs = Environment.GetCommandLineArgs();
+        foreach(string command in commandLineArgs)
+        {
+            if(command.ToLower().Contains("batchmode"))
+            {
                 return true;
             }
         }

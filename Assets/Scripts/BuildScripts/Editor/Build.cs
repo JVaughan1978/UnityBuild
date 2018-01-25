@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
@@ -16,18 +17,14 @@ public class Build
 
         if(!CheckAndroidPaths())
         {
-            Debug.Log("ERROR");
+            Debug.Log("ERROR: INVALID ANDROID PATHS");
             return;
         }
-
-        string path = buildPathRoot + "android/";
-        CheckDirectory(path);
-        path += Application.productName + ".apk";
 
         BuildPlayerOptions options = new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
-            locationPathName= path,
+            locationPathName= GetPath("android", ".apk"),
             target= BuildTarget.Android,
             options= BuildOptions.Il2CPP
         };
@@ -40,14 +37,10 @@ public class Build
     {
         Debug.Log("Starting iOS Build");
 
-        string path= buildPathRoot + "ios/";
-        CheckDirectory(path);
-        path += Application.productName;
-
         BuildPlayerOptions options = new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
-            locationPathName= path,
+            locationPathName= GetPath("ios", ""),
             target= BuildTarget.iOS,
             options= BuildOptions.Il2CPP
         };
@@ -59,14 +52,10 @@ public class Build
     {
         Debug.Log("Starting Standalone OSX Build");
 
-        string path= buildPathRoot + "osx/";
-        CheckDirectory(path);
-        path += Application.productName + ".app";
-
         BuildPlayerOptions options = new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
-            locationPathName= path,
+            locationPathName= GetPath("osx", ""); 
             target= BuildTarget.StandaloneOSX,
             options= BuildOptions.Il2CPP
         };
@@ -80,20 +69,17 @@ public class Build
     {
         Debug.Log("Starting Windows 64 Build");
 
-        string path = buildPathRoot + "win64/";
-        CheckDirectory(path);
-        path += Application.productName + ".exe";
-
         BuildPlayerOptions options = new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
-            locationPathName= path,
+            locationPathName= GetPath("win64",".exe"),
             target= BuildTarget.StandaloneWindows64,
             options= BuildOptions.None
         };
         _Build(options);
     }
 #endif
+#endregion
 
 #region CLI_BUILD
     public static void Android()
@@ -119,7 +105,7 @@ public class Build
         //TBD
     }
 #endif
-    #endregion
+#endregion
 
 #region COMMON_FUNCTIONS
     static void _Build(BuildPlayerOptions options)
@@ -132,6 +118,14 @@ public class Build
     static void PreBuild()
     {
         //S 
+    }
+
+    static string GetPath(string buildTarget, string extension)
+    {
+        string path = buildPathRoot + buildTarget + "/";
+        CheckDirectory(path);
+        path += Application.productName + extension;
+        return path;
     }
 
     static string[] GetScenesFromSettings()
@@ -180,13 +174,43 @@ public class Build
         return true;
     }
 
-    static string GetBuildPathFromArgs()
+    static bool GetBuildPathFromArgs(out string path)
     {
-        return null;
+        path = null;
+        string[] commandlineArgs = Environment.GetCommandLineArgs();
+        for(int i = 0; i < commandlineArgs.Length; i++)
+        {
+            if(commandlineArgs[i] == "-buildPath")
+            {
+                if(i == commandlineArgs.Length)
+                {
+                    Debug.Log("No next arg found");
+                    return false;
+                }
+
+                path = commandlineArgs[i+1];
+
+                if(string.IsNullOrEmpty(path))
+                {
+                    Debug.Log("Null or empty path.");
+                    return false;
+                }
+
+                if(!Uri.IsWellFormedUriString(path, UriKind.Absolute))
+                {
+                    Debug.Log("Malformed Uri");
+                    return false;
+                }
+
+                return true;
+            }
+        }
+        return false;
     }
 
     static BuildOptions GetBuildOptionsFromArgs()
     {
+        Debug.Log("Not ready yet...");
         return BuildOptions.None;
     }
 #endregion

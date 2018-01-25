@@ -262,7 +262,7 @@ public class Build
             buildRoot= n["buildRoot"].Value;
             Debug.Log("get build root : " + n["buildRoot"]);
         }
-        path= buildPathRoot + buildTarget + "/";
+        path= buildRoot + buildTarget + "/";
 
         CheckDirectory(path);
         path += Application.productName + extension;

@@ -1,13 +1,16 @@
-﻿using System;
+﻿using SimpleJSON;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
 public class Build
 {
     //TODO: Common Config...
-    private static string buildPathRoot= "d:/builds/";
+    private static string buildPathRoot= "c:/builds/";
 
 #region BUILD_MENU
     [MenuItem("Build/Build Android")]
@@ -238,9 +241,29 @@ public class Build
         //TODO: Depends on a few internal conditions
     }
 
+    static Dictionary<K, V> HashtableToDictionary<K, V>(Hashtable table)
+    {
+        return table
+          .Cast<DictionaryEntry>()
+          .ToDictionary(kvp => (K)kvp.Key, kvp => (V)kvp.Value);
+    }
+
     static string GetPath(string buildTarget, string extension)
     {
-        string path= buildPathRoot + buildTarget + "/";
+        string buildRoot= buildPathRoot;
+
+        string path= string.Empty;
+        DirectoryInfo rootPath= Directory.GetParent(Application.dataPath);
+        string configPath= rootPath.FullName + "/Config/config.json";
+        if(File.Exists(configPath))
+        {
+            string jsonString= File.ReadAllText(configPath);
+            var n= JSON.Parse(jsonString);
+            buildRoot= n["buildRoot"].Value;
+            Debug.Log("get build root : " + n["buildRoot"]);
+        }
+        path= buildPathRoot + buildTarget + "/";
+
         CheckDirectory(path);
         path += Application.productName + extension;
         return path;

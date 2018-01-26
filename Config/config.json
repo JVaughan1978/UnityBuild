@@ -1,3 +1,4 @@
 {
-	"buildRoot" : "D:/builds/"
+	"buildRoot" : "D:/builds/",
+	"osxBuildRoot" : "/Users/josh/builds/"
 }

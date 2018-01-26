@@ -296,11 +296,11 @@ public class Build
 
     static bool IsFileLocked(FileInfo file)
     {
-        FileStream = null;
+        FileStream stream= null;
 
         try
         {
-            stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+            stream= file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
         }
         catch(IOException)
         {
@@ -309,7 +309,7 @@ public class Build
         finally
         {
             if(stream != null)
-                stream.Close;
+                stream.Close();
         }
         return false;
     }

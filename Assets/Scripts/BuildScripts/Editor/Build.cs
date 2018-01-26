@@ -239,13 +239,6 @@ public class Build
         //TODO: Depends on a few internal conditions
     }
 
-    static Dictionary<K, V> HashtableToDictionary<K, V>(Hashtable table)
-    {
-        return table
-          .Cast<DictionaryEntry>()
-          .ToDictionary(kvp => (K)kvp.Key, kvp => (V)kvp.Value);
-    }
-
     static string GetPath(string buildTarget, string extension)
     {
         string buildRoot= buildPathRoot;
@@ -291,13 +284,34 @@ public class Build
             DirectoryInfo di = new DirectoryInfo(path);
             foreach(FileInfo file in di.GetFiles())
             {
-                file.Delete();
+                if(!IsFileLocked(file))
+                    file.Delete();
             }
             foreach(DirectoryInfo dir in di.GetDirectories())
             {
                 dir.Delete(true);
             }
         }
+    }
+
+    static bool IsFileLocked(FileInfo file)
+    {
+        FileStream = null;
+
+        try
+        {
+            stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+        }
+        catch(IOException)
+        {
+            return true;
+        }
+        finally
+        {
+            if(stream != null)
+                stream.Close;
+        }
+        return false;
     }
 
     static bool CheckAndroidPaths()
@@ -329,7 +343,7 @@ public class Build
     {
         path= null;
         string[] commandlineArgs= Environment.GetCommandLineArgs();
-        string commands = string.Empty;
+        string commands= string.Empty;
         foreach(var command in commandlineArgs)
         {
             commands += command + Environment.NewLine;

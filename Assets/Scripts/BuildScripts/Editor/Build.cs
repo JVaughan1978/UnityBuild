@@ -76,7 +76,7 @@ public class Build
         BuildPlayerOptions options= new BuildPlayerOptions
         {
             scenes= GetScenesFromSettings(),
-            locationPathName= GetPath("osx", ""); 
+            locationPathName= GetPath("osx", ""), 
             target= BuildTarget.StandaloneOSX,
             options= BuildOptions.Il2CPP
         };

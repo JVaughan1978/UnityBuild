@@ -8,11 +8,15 @@ using UnityEditor;
 public class Build
 {
     //default build path can be overridden by creating UnityProjRoot/Config/config.json
+#if UNITY_EDITOR_WIN
     private static string buildPathRoot= "c:/builds/";
+#elif UNITY_EDITOR_OSX
+    private static string buildPathRoot= "/Users/Shared/Builds/";
+#endif
 
 #region BUILD_MENU
     [MenuItem("Build/Build Android")]
-    static void BuildAndroid()
+    public static void BuildAndroid()
     {
         Debug.Log("Starting Android Build");
 
@@ -349,14 +353,19 @@ public class Build
         string buildRoot= buildPathRoot;
 
         string path= string.Empty;
-        DirectoryInfo rootPath= Directory.GetParent(Application.dataPath);
+        DirectoryInfo rootPath= Directory.GetParent(Application.dataPath);        
         string configPath= rootPath.FullName + "/Config/config.json";
         if(File.Exists(configPath))
         {
             string jsonString= File.ReadAllText(configPath);
             var n= JSON.Parse(jsonString);
+#if UNITY_EDITOR_WIN
             buildRoot= n["buildRoot"].Value;
             Debug.Log("get build root : " + n["buildRoot"]);
+#elif UNITY_EDITOR_OSX
+            buildRoot= n["osxBuildRoot"].Value;
+            Debug.Log("get build root : " + n["osxBuildRoot"]);
+#endif
         }
         path= buildRoot + buildTarget + "/";
 

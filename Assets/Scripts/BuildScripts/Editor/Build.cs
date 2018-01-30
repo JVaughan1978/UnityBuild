@@ -1,9 +1,7 @@
 ﻿using SimpleJSON;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
@@ -40,6 +38,53 @@ public class Build
         _Build(options);
     }
 
+    [MenuItem("Build/Build Linux")]
+    static void BuildLinux()
+    {
+        Debug.Log("Starting Linux Build");
+
+        if(InBatchMode())
+        {
+            Debug.Log("ERROR: EDITOR ONLY");
+            return;
+        }
+
+        BuildPlayerOptions options= new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= GetPath("linux", ".x86"),
+            target= BuildTarget.StandaloneLinuxUniversal,
+            options= BuildOptions.Il2CPP
+        };
+        _Build(options);
+    }
+
+    [MenuItem("Build/Build Linux Server")]
+    static void BuildLinuxServer()
+    {
+        Debug.Log("Starting Linux Server Build");
+
+        if(InBatchMode())
+        {
+            Debug.Log("ERROR: EDITOR ONLY");
+            return;
+        }
+
+        BuildOptions headlessOption= BuildOptions.None;
+        headlessOption |= BuildOptions.Il2CPP;
+        headlessOption |= BuildOptions.EnableHeadlessMode;
+
+        BuildPlayerOptions options= new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= GetPath("linuxServer", ".x86_64"),
+            target= BuildTarget.StandaloneLinux64,
+            options= headlessOption 
+        };
+        _Build(options);
+    }
+
+
 #if UNITY_EDITOR_OSX
     [MenuItem("Build/Build iOS")]
     public static void BuildiOS()
@@ -62,10 +107,10 @@ public class Build
         _Build(options);
     }
 
-    [MenuItem("Build/Build Standalone OSX")]
+    [MenuItem("Build/Build  OSX")]
     public static void BuildMac()
     {
-        Debug.Log("Starting Standalone OSX Build");
+        Debug.Log("Starting OSX Build");
 
         if(InBatchMode())
         {
@@ -85,7 +130,7 @@ public class Build
 #endif
 
 #if UNITY_EDITOR_WIN
-    [MenuItem("Build/Build Standalone Windows 64")]
+    [MenuItem("Build/Build Windows 64")]
     static void BuildWindows()
     {
         Debug.Log("Starting Windows 64 Build");
@@ -137,10 +182,70 @@ public class Build
         _Build(options);
     }
 
+    public static void Linux()
+    {
+        Debug.Log("Starting Linux Build");
+
+        if(!InBatchMode())
+        {
+            Debug.Log("ERROR: CLI USE ONLY");
+            return;
+        }
+
+        string path = string.Empty;
+        bool _build = GetBuildPathFromArgs(out path);
+        if(!_build)
+        {
+            Debug.Log("ERROR: Invalid Path");
+            return;
+        }
+
+        BuildPlayerOptions options= new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= path,
+            target= BuildTarget.StandaloneLinuxUniversal,
+            options= BuildOptions.Il2CPP
+        };
+        _Build(options);
+    }
+
+    public static void LinuxServer()
+    {
+        Debug.Log("Starting Linux Build");
+
+        if(!InBatchMode())
+        {
+            Debug.Log("ERROR: CLI USE ONLY");
+            return;
+        }
+
+        string path = string.Empty;
+        bool _build = GetBuildPathFromArgs(out path);
+        if(!_build)
+        {
+            Debug.Log("ERROR: Invalid Path");
+            return;
+        }
+
+        BuildOptions headlessOption= BuildOptions.None;
+        headlessOption |= BuildOptions.Il2CPP;
+        headlessOption |= BuildOptions.EnableHeadlessMode;
+
+        BuildPlayerOptions options = new BuildPlayerOptions
+        {
+            scenes= GetScenesFromSettings(),
+            locationPathName= path,
+            target= BuildTarget.StandaloneLinuxUniversal,
+            options= headlessOption,
+        };
+        _Build(options);
+    }
+
 #if UNITY_EDITOR_OSX
     public static void iOS()
     {
-        Debug.Log("Starting Standalone iOS Build");
+        Debug.Log("Starting iOS Build");
 
         if(!InBatchMode())
         {
@@ -168,7 +273,7 @@ public class Build
 
     public static void OSX()
     {
-        Debug.Log("Starting Standalone OSX Build");
+        Debug.Log("Starting OSX Build");
 
         if(!InBatchMode())
         {
@@ -198,7 +303,7 @@ public class Build
 #if UNITY_EDITOR_WIN
     public static void Win64()
     {
-        Debug.Log("Starting Standalone Windows 64 Build");
+        Debug.Log("Starting Windows 64 Build");
 
         if(!InBatchMode())
         {
